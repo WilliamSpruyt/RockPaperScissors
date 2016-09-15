@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/theBase"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:label="Rock Paper Scissors"
+    android:orientation="vertical"
+
+
+    tools:context="qwerky.rockpaperscissors.MainActivity">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+
+            android:id="@+id/level"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="#B71C1C"
+            android:text="Level 1"
+
+            android:textColor="#FFEBEE" />
+
+        <TextView
+
+            android:id="@+id/chancez"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="#B71C1C"
+            android:text="likes 0"
+
+            android:textColor="#FFEBEE" />
+
+        <TextView
+            android:id="@+id/ztreak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="#B71C1C"
+            android:text="Streak 0"
+
+            android:textColor="#FFEBEE" />
+        <TextView
+            android:id="@+id/hi_level"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="#B71C1C"
+            android:text="Record Level 0"
+
+            android:textColor="#FFEBEE" />
+        <TextView
+            android:id="@+id/hi_streak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="#B71C1C"
+            android:text="Longest Streak 0"
+
+            android:textColor="#FFEBEE" />
+
+        <TextView
+            android:id="@+id/infomazione"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00ff00"
+            android:onClick="displayInfo"
+            android:text="i"
+            android:textAlignment="center"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    />
+
+    <LinearLayout
+        android:background="#F44336"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+
+        android:orientation="horizontal">
+
+
+        <ImageView
+
+            android:id="@+id/rock_image"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/smashesscisorsthumb"
+             />
+
+        <TextView
+            android:id="@+id/rock_button"
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="#F44336"
+            android:gravity="fill_vertical"
+
+            android:text="Rock"
+            android:textSize="76sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="#2196F3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/paper_image"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/beatsrockthumb" />
+
+        <TextView
+            android:id="@+id/paper_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="#2196F3"
+            android:gravity="fill_vertical"
+
+            android:text="Paper"
+
+            android:textSize="76sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="#FFEB3B"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/scissors_image"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/cutspaperthumb" />
+
+        <TextView
+            android:id="@+id/scissors_button"
+            android:layout_width="0dp"
+
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="#FFEB3B"
+            android:gravity="fill_vertical"
+
+            android:text="Scissors"
+
+            android:textSize="76sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#000000"
+        android:orientation="vertical">
+
+
+        <ImageView
+
+            android:id="@+id/challenge"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#000000"
+
+
+            android:src="@drawable/beatsclown" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
