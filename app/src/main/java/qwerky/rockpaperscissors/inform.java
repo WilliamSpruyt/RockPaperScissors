@@ -22,6 +22,10 @@ public class inform extends AppCompatActivity {
         //Extract the data…
         //Thingy set1 = (Thingy)bundle.getSerializable("Stuff");
         //These are all the diffent rock paper scissors thingies.
+         Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsred, R.drawable.beatsyellowthumb, "is more dangerous than");
+         Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsblue, R.drawable.beatsredthumb, "depresses");
+         Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsyellow, R.drawable.beatsbluethumb, "greens up");
+
          Thingy rock = new Thingy("Rock", "Scissors", R.drawable.smashesscisors, R.drawable.smashesscisorsthumb, "smashes");
          Thingy paper = new Thingy("Paper", "Rock",R.drawable.beatsrock,R.drawable.beatsrockthumb, "wraps");
          Thingy scissors = new Thingy("Scissors", "Paper",  R.drawable.cutspaper, R.drawable.cutspaperthumb, "cut");
@@ -54,7 +58,7 @@ public class inform extends AppCompatActivity {
          Thingy wines = new Thingy("Wines", "Beer", R.drawable.beatsclown,R.mipmap.ic_launcher, "make you feel queer after");
          Thingy spirits = new Thingy("Spirits", "Wines", R.drawable.beatsclown, R.mipmap.ic_launcher, "are stronger than");
 
-        Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt, monkey, clown, banana, knife,
+        Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt,red,blue,yellow, monkey, clown, banana, knife,
                 spoon, fork, slug, frog, snake, beer, wines, spirits, fire, water, air, fox, hunter, chief};
 
         final ArrayList<Thingy> set2 = new ArrayList<Thingy>(Arrays.asList(set1));

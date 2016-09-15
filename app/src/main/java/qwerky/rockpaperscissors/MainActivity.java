@@ -66,11 +66,14 @@ public class MainActivity extends AppCompatActivity {
     private Thingy hunter = new Thingy("Hunter", "Fox", R.drawable.beatshunter, R.drawable.beatsfoxthumb, "guts");
     private Thingy chief = new Thingy("Chief", "Hunter", R.drawable.beatschief, R.drawable.beatshunterthumb, "bosses");
 
+    private Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsred, R.drawable.beatsyellowthumb, "is more dangerous than");
+    private Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsblue, R.drawable.beatsredthumb, "depresses");
+    private Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsyellow, R.drawable.beatsbluethumb, "greens up");
+
     private Thingy beer = new Thingy("Beer", "Spirits", R.drawable.beatsclown, R.mipmap.ic_launcher, "raises");
     private Thingy wines = new Thingy("Wines", "Beer", R.drawable.beatsclown, R.mipmap.ic_launcher, "make you feel queer after");
     private Thingy spirits = new Thingy("Spirits", "Wines", R.drawable.beatsclown, R.mipmap.ic_launcher, "are stronger than");
-
-    Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt, monkey, clown, banana, knife,
+    Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt, monkey, clown, banana,red,blue,yellow, knife,
             spoon, fork, slug, frog, snake, beer, wines, spirits, fire, water, air, fox, hunter, chief};
     private MediaPlayer muzak;
 
