@@ -22,9 +22,9 @@ public class inform extends AppCompatActivity {
         //Extract the data…
         //Thingy set1 = (Thingy)bundle.getSerializable("Stuff");
         //These are all the diffent rock paper scissors thingies.
-         Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsred, R.drawable.beatsyellowthumb, "is more dangerous than");
-         Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsblue, R.drawable.beatsredthumb, "depresses");
-         Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsyellow, R.drawable.beatsbluethumb, "greens up");
+         Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsyellow, R.drawable.beatsyellowthumb, "is more dangerous than");
+         Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsred, R.drawable.beatsredthumb, "depresses");
+         Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsblue, R.drawable.beatsbluethumb, "greens up");
 
          Thingy rock = new Thingy("Rock", "Scissors", R.drawable.smashesscisors, R.drawable.smashesscisorsthumb, "smashes");
          Thingy paper = new Thingy("Paper", "Rock",R.drawable.beatsrock,R.drawable.beatsrockthumb, "wraps");
