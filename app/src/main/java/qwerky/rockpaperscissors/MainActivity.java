@@ -1,14 +1,20 @@
 package qwerky.rockpaperscissors;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,9 +23,14 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.Random;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity {
-    // counter for objects in array set1
+    // counter for objects in array ThingyArsenal.ALL_THINGS
     int thingCount = 0;
+    Random choose=new Random();
 
     Boolean musicWanted = true;
     int level = 0;
@@ -37,51 +48,16 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private GoogleApiClient client;
-    //These are all the diffent rock paper scissors thingies.
-    private Thingy rock = new Thingy("Rock", "Scissors", R.drawable.beatsrock, R.drawable.smashesscisorsthumb, "smashes");
-    private Thingy paper = new Thingy("Paper", "Rock", R.drawable.cutspaper, R.drawable.beatsrockthumb, "wraps");
-    private Thingy scissors = new Thingy("Scissors", "Paper", R.drawable.smashesscisors, R.drawable.cutspaperthumb, "cut");
-
-    private Thingy monkey = new Thingy("Monkey", "Banana", R.drawable.beatsmonkey, R.drawable.eatsbananathumb, "eats");
-    private Thingy clown = new Thingy("Clown", "Monkey", R.drawable.slipsclown, R.drawable.beatsmonkeythumb, "shoots");
-    private Thingy banana = new Thingy("Banana", "Clown", R.drawable.eatsbanana, R.drawable.slipsclownthumb, "slips up");
-
-    private Thingy knife = new Thingy("Knife", "Fork", R.drawable.beatsknife, R.drawable.beatsforkthumb, "stabs");
-    private Thingy spoon = new Thingy("Spoon", "Knife", R.drawable.beatsspoon, R.drawable.beatsknifethumb, "reflects and shrinks");
-    private Thingy fork = new Thingy("Fork", "Spoon", R.drawable.beatsfork, R.drawable.beatsspoonthumb, "forks");
-
-    private Thingy humanity = new Thingy("Humanity", "DDT", R.drawable.beatshumanity, R.drawable.beatsddtthumb, "outlaws");
-    private Thingy mosquito = new Thingy("Mosquito", "Humanity", R.drawable.beastmosquito, R.drawable.beatshumanitythumb, "plagues");
-    private Thingy ddt = new Thingy("DDT", "Mosquito", R.drawable.beatsddt, R.drawable.beastmosquitothumb, "exterminates");
-
-    private Thingy fire = new Thingy("Fire", "Air", R.drawable.beatsfire2, R.drawable.beatsairthumb, "consumes");
-    private Thingy water = new Thingy("Water", "Fire", R.drawable.beatswater, R.drawable.beatsfire2thumb, "extinguishes");
-    private Thingy air = new Thingy("Air", "Water", R.drawable.beatsair, R.drawable.beatswaterthumb, "evaporates");
-
-    private Thingy slug = new Thingy("Slug", "Snake", R.drawable.beatslug2, R.drawable.beatsssnakethumb, "slimes");
-    private Thingy frog = new Thingy("Frog", "Slug", R.drawable.beatsfrog, R.drawable.beatslugthumb, "tongue-grabs");
-    private Thingy snake = new Thingy("Snake", "Frog", R.drawable.beatsssnake, R.drawable.beatsfrogthumb, "swallows whole");
-
-    private Thingy fox = new Thingy("Fox", "Chief", R.drawable.beatsfox, R.drawable.beatschiefthumb, "outsmarts");
-    private Thingy hunter = new Thingy("Hunter", "Fox", R.drawable.beatshunter, R.drawable.beatsfoxthumb, "guts");
-    private Thingy chief = new Thingy("Chief", "Hunter", R.drawable.beatschief, R.drawable.beatshunterthumb, "bosses");
-
-    private Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsred, R.drawable.beatsyellowthumb, "is more dangerous than");
-    private Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsblue, R.drawable.beatsredthumb, "depresses");
-    private Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsyellow, R.drawable.beatsbluethumb, "greens up");
-
-    private Thingy beer = new Thingy("Beer", "Spirits", R.drawable.beatsclown, R.mipmap.ic_launcher, "raises");
-    private Thingy wines = new Thingy("Wines", "Beer", R.drawable.beatsclown, R.mipmap.ic_launcher, "make you feel queer after");
-    private Thingy spirits = new Thingy("Spirits", "Wines", R.drawable.beatsclown, R.mipmap.ic_launcher, "are stronger than");
-    Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt, monkey, clown, banana,red,blue,yellow, knife,
-            spoon, fork, slug, frog, snake, beer, wines, spirits, fire, water, air, fox, hunter, chief};
+     
     private MediaPlayer muzak;
 
     private Cpu computer = new Cpu();
     //records player choice;
     private int playerChoice = 7;
-    private Boolean yourTurn = true;
+    private boolean yourTurn = true;
+    private boolean bonkers=false;
     private String result = "draw";
+    private int numberOfThings=(ThingyArsenal.ALL_THINGS.length);
 
     public String getSender() {
         return sender;
@@ -99,60 +75,91 @@ public class MainActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        bonkers=sp.getBoolean("Warped",false);
+        musicWanted=sp.getBoolean("Music",true);
         // Restore preferences
         SharedPreferences scores = getSharedPreferences("scores", MODE_PRIVATE);
         hiLevel = scores.getInt("toplevel", 0);
         hiStreak = scores.getInt("histreak", 0);
+
+        final CircleImageView rockpic=(CircleImageView) findViewById(R.id.rock_image);
+        final CircleImageView paperpic=(CircleImageView) findViewById(R.id.paper_image);
+        final CircleImageView scissorspic=(CircleImageView) findViewById(R.id.scissors_image);
 
 
         final TextView rockView = (TextView) findViewById(R.id.rock_button);
         final TextView paperView = (TextView) findViewById(R.id.paper_button);
         final TextView scissorsView = (TextView) findViewById(R.id.scissors_button);
         final TextView theI = (TextView) findViewById(R.id.infomazione);
-
+        doStarting();
 
         if (rockView != null) {
             rockView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    rockMme(v);
+                     rockpic.setBorderWidth(10);rockMme(v,1);
                 }
             });
         }
         if (paperView != null) {
             paperView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    papMme(v);
+                public void onClick(View v) {paperpic.setBorderWidth(10);
+                    rockMme(v,2);;
                 }
             });
         }
         if (scissorsView != null) {
             scissorsView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    sciMme(v);
+                public void onClick(View v) {scissorspic.setBorderWidth(10);
+                    rockMme(v,3);
                 }
             });
         }
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        return true;
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;}
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
-    public void rockMme(View view) {
+    public void rockMme(View view,int playerChoice) {
         if (yourTurn) {
             TextView pressedView = (TextView) findViewById(R.id.rock_button);
-            if (pressedView != null) {
-                pressedView.setBackgroundColor(Color.rgb(11, 188, 201));
-            }
 
-            playerChoice = 1;
-            result = inPlay(set1[thingCount], set1[thingCount + 1], set1[thingCount + 2], computer);
+
+
+
+            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
             if (result.equals("win")) {
                 final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
                 ding.start();
-                outcomePic = set1[thingCount].beatsPic;
+                outcomePic = ThingyArsenal.ALL_THINGS[thingCount].beatsPic;
                 thingCount += 3;
+                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
 
             } else if (result.equals("lose")) {
+                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
+                pressedView.startAnimation(hyperspaceJumpAnimation);
+
                 if (hiStreak < streak) {
                     hiStreak = streak;
                 }
@@ -164,8 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 level = 1;
 
 
-                setSender("You chose " + set1[thingCount].getName() + ".\nThe computer chose " + set1[thingCount + 1].getName() + ".\nYou lose.\n"
-                        + set1[thingCount + 1].getName() + " " + set1[thingCount + 1].getVerb() + " " + set1[thingCount].getName() + ".");
+                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".\nYou lose.\n"
+                        + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount + 1].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".");
 
                 thingCount = 0;
                 Intent i = new Intent(this, SleepActivity.class);
@@ -197,18 +204,19 @@ public class MainActivity extends AppCompatActivity {
 
         if (yourTurn) {
             TextView pressedView = (TextView) findViewById(R.id.paper_button);
-            if (pressedView != null) {
-                pressedView.setBackgroundColor(Color.rgb(255, 105, 12));
-            }
+
             playerChoice = 2;
-            result = inPlay(set1[thingCount], set1[thingCount + 1], set1[thingCount + 2], computer);
+            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
             if (result.equals("win")) {
                 final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
                 ding.start();
-                outcomePic = set1[thingCount + 1].beatsPic;
+                outcomePic = ThingyArsenal.ALL_THINGS[thingCount + 1].beatsPic;
                 thingCount += 3;
+                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
 
             } else if (result.equals("lose")) {
+                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
+                pressedView.startAnimation(hyperspaceJumpAnimation);
                 if (hiStreak < streak) {
                     hiStreak = streak;
                 }
@@ -220,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
                 level = 1;
 
 
-                setSender("You chose " + set1[thingCount + 1].getName() + ".\nThe computer chose " + set1[thingCount + 2].getName() + ".\nYou lose.\n"
-                        + set1[thingCount + 2].getName() + " " + set1[thingCount + 2].getVerb() + " " + set1[thingCount + 1].getName() + ".");
+                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".\nYou lose.\n"
+                        + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount + 2].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".");
 
                 thingCount = 0;
 
@@ -250,18 +258,19 @@ public class MainActivity extends AppCompatActivity {
 
         if (yourTurn) {
             TextView pressedView = (TextView) findViewById(R.id.scissors_button);
-            if (pressedView != null) {
-                pressedView.setBackgroundColor(Color.rgb(0, 20, 196));
-            }
+
             playerChoice = 3;
-            result = inPlay(set1[thingCount], set1[thingCount + 1], set1[thingCount + 2], computer);
+            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
             if (result.equals("win")) {
                 final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
                 ding.start();
-                outcomePic = set1[thingCount + 2].beatsPic;
+                outcomePic = ThingyArsenal.ALL_THINGS[thingCount + 2].beatsPic;
                 thingCount += 3;
+                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
 
             } else if (result.equals("lose")) {
+                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
+                pressedView.startAnimation(hyperspaceJumpAnimation);
                 if (hiStreak < streak) {
                     hiStreak = streak;
                 }
@@ -273,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
                 level = 1;
 
 
-                setSender("You chose " + set1[thingCount + 2].getName() + ".\nThe computer chose " + set1[thingCount].getName() + ".\nYou lose.\n"
-                        + set1[thingCount].getName() + " " + set1[thingCount].getVerb() + " " + set1[thingCount + 2].getName() + ".");
+                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".\nYou lose.\n"
+                        + ThingyArsenal.ALL_THINGS[thingCount].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".");
 
                 thingCount = 0;
 
@@ -301,10 +310,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void doStarting() {
-        if (thingCount > set1.length - 1) {
+        if (thingCount > ThingyArsenal.ALL_THINGS.length - 1) {
             thingCount = 0;
         }
-
+        final CircleImageView rockpic=(CircleImageView) findViewById(R.id.rock_image);
+        final CircleImageView paperpic=(CircleImageView) findViewById(R.id.paper_image);
+        final CircleImageView scissorspic=(CircleImageView) findViewById(R.id.scissors_image);
+        scissorspic.setBorderWidth(0);
+        rockpic.setBorderWidth(0);
+        paperpic.setBorderWidth(0);
         TextView sciView = (TextView) findViewById(R.id.scissors_button);
 
         if (sciView == null) throw new AssertionError();
@@ -319,10 +333,14 @@ public class MainActivity extends AppCompatActivity {
             papView.setBackgroundColor(Color.rgb(33, 150, 243));
         }
 
-        display(set1[thingCount].getName(), R.id.rock_button, R.id.rock_image, set1[thingCount].getThumb());
 
-        display(set1[thingCount + 1].getName(), R.id.paper_button, R.id.paper_image, set1[thingCount + 1].getThumb());
-        display(set1[thingCount + 2].getName(), R.id.scissors_button, R.id.scissors_image, set1[thingCount + 2].getThumb());
+        display(ThingyArsenal.ALL_THINGS[thingCount].getName(), R.id.rock_button, R.id.rock_image, ThingyArsenal.ALL_THINGS[thingCount].getThumb());
+        int p=1;
+        int s=2;
+        if(bonkers){p=(choose.nextInt(numberOfThings/3)*3)+1-thingCount;
+                    s=(choose.nextInt(numberOfThings/3)*3)+2-thingCount;}
+        display(ThingyArsenal.ALL_THINGS[thingCount + p].getName(), R.id.paper_button, R.id.paper_image, ThingyArsenal.ALL_THINGS[thingCount + p].getThumb());
+        display(ThingyArsenal.ALL_THINGS[thingCount + s].getName(), R.id.scissors_button, R.id.scissors_image, ThingyArsenal.ALL_THINGS[thingCount + s].getThumb());
         yourTurn = true;
 
 
@@ -366,13 +384,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayInfo(View view) {
-        String[] infoString = new String[set1.length];
-        int[] pics = new int[set1.length];
+        String[] infoString = new String[ThingyArsenal.ALL_THINGS.length];
+        int[] pics = new int[ThingyArsenal.ALL_THINGS.length];
 
-        for (int i = 0; i < set1.length; i++) {
+        for (int i = 0; i < ThingyArsenal.ALL_THINGS.length; i++) {
 
-            infoString[i] = set1[i].toString();
-            pics[i] = set1[i].getThumb();
+            infoString[i] = ThingyArsenal.ALL_THINGS[i].toString();
+            pics[i] = ThingyArsenal.ALL_THINGS[i].getThumb();
         }
 
 
@@ -380,10 +398,10 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
 
-//Add your data to bundle
+//Add your data to bundlef
         // bundle.putStringArray("Stuff", infoString);
         // bundle.putIntArray("pics",pics);
-        bundle.putSerializable("stuff", set1);
+        bundle.putSerializable("stuff", ThingyArsenal.ALL_THINGS);
 
 
 //Add the bundle to the intent
@@ -403,11 +421,15 @@ public class MainActivity extends AppCompatActivity {
        /*
         Button sciBut = (Button) findViewById(
                 R.id.scissors_button);*/
-        if (rockBut != null) {
-            rockBut.setTextSize(76);
-        }
-        if (rockBut != null) {
+
+        if (rockBut != null)  {
+
+            Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.tweener);
+            rockBut.startAnimation(hyperspaceJumpAnimation);
             rockBut.setText(rocky);
+            rockBut.setTextSize(70);
+
+
         }
         if (rockIm != null) {
             rockIm.setImageResource(thumb);
@@ -428,8 +450,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-        doStarting();
-        if (muzak != null) {
+
+        if (muzak != null||musicWanted) {
             muzak.start();
         }
 
@@ -487,9 +509,16 @@ public class MainActivity extends AppCompatActivity {
         String result = "dna";
         String verb = "likes";
         int thumb = R.mipmap.ic_launcher;
+        int computerInt=0;
 
 
         cpu = computer.cpuChoice(rock, paper, scissors);
+        if(bonkers){
+        if (cpu.equals(rock.getName())){computerInt=1;}
+        if (cpu.equals(paper.getName())){computerInt=2;}
+        if (cpu.equals(scissors.getName())){computerInt=3;}
+        }
+
         ImageView thumbShow = (ImageView) findViewById(
                 R.id.challenge);
         TextView mess = (TextView) findViewById(
@@ -525,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
             result = scissors.compete(cpu);
 
         }
+        if(bonkers)result=crazyPlay(playerChoice,computerInt);
 
 
         if (result.equals("lose")) {
@@ -552,8 +582,10 @@ public class MainActivity extends AppCompatActivity {
             if (mess != null) {
                 mess.setBackgroundColor(Color.rgb(0, 255, 0));
                 mess.setTextSize(30);
-                mess.setText("You chose " + name + ".\nThe computer chose " + cpu + ".\nYou win.\n"
-                        + name + " " + verb + " " + cpu + ".");
+                String messText="You chose " + name + ".\nThe computer chose " + cpu + ". You win!\n"
+                        + name + " " + verb + " " + cpu + ".";
+                if(messText.length()>80){mess.setTextSize(25);}
+                mess.setText(messText);
                 if (thumbShow != null) {
                     thumbShow.setImageResource(thumb);
                 }
@@ -590,6 +622,24 @@ public class MainActivity extends AppCompatActivity {
         return result;
 
     }
+    private String crazyPlay(int playerChoice,int cpuChoice)
+    {   toaster("p "+playerChoice+"c "+cpuChoice);
+
+        if (playerChoice==cpuChoice)return"draw";
+        if (playerChoice==0&&cpuChoice==2||playerChoice==1&&cpuChoice==0||playerChoice==2&&cpuChoice==1)return"win";
+
+        return"lose";
+
+    }
+    public void toaster(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = "Hello toast!";
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
+
 
     private void releaseMediaPlayer(MediaPlayer mp) {
         // If the media player is not null, then it may be currently playing a sound.
