@@ -66,38 +66,27 @@
 
             android:textColor="#FFEBEE" />
 
-        <TextView
-            android:id="@+id/infomazione"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#00ff00"
-            android:onClick="displayInfo"
-            android:text="i"
-            android:textAlignment="center"
-            android:textAllCaps="false" />
+
     </LinearLayout>
 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
+
 
     <LinearLayout
-        android:background="#F44336"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
+        android:background="#F44336"
 
         android:orientation="horizontal">
 
 
-        <ImageView
-
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/rock_image"
-            android:layout_width="wrap_content"
+            android:layout_width="96dp"
             android:layout_height="match_parent"
             android:src="@drawable/smashesscisorsthumb"
-             />
+            app:civ_border_color="#800080"
+            app:civ_border_width="0dp" />
 
         <TextView
             android:id="@+id/rock_button"
@@ -108,23 +97,25 @@
             android:background="#F44336"
             android:gravity="fill_vertical"
 
-            android:text="Rock"
-            android:textSize="76sp" />
+
+            android:textSize="36sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:background="#2196F3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
+        android:background="#2196F3"
         android:orientation="horizontal">
 
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/paper_image"
-            android:layout_width="wrap_content"
+            android:layout_width="96dp"
             android:layout_height="match_parent"
-            android:src="@drawable/beatsrockthumb" />
+            android:src="@drawable/beatsrockthumb"
+            app:civ_border_color="#800080"
+            app:civ_border_width="0dp" />
+
 
         <TextView
             android:id="@+id/paper_button"
@@ -134,9 +125,8 @@
             android:background="#2196F3"
             android:gravity="fill_vertical"
 
-            android:text="Paper"
 
-            android:textSize="76sp" />
+            android:textSize="36sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -146,12 +136,14 @@
         android:background="#FFEB3B"
         android:orientation="horizontal">
 
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/scissors_image"
-            android:layout_width="wrap_content"
+            android:layout_width="96dp"
             android:layout_height="match_parent"
-            android:src="@drawable/cutspaperthumb" />
+            android:src="@drawable/cutspaperthumb"
+            app:civ_border_color="#800080"
+            app:civ_border_width="0dp" />
+
 
         <TextView
             android:id="@+id/scissors_button"
@@ -162,9 +154,8 @@
             android:background="#FFEB3B"
             android:gravity="fill_vertical"
 
-            android:text="Scissors"
 
-            android:textSize="76sp" />
+            android:textSize="36sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -174,16 +165,16 @@
         android:orientation="vertical">
 
 
-        <ImageView
-
+        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/challenge"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
-            android:background="#000000"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_color="#800080"
+            app:civ_border_width="2dp" />
 
 
-            android:src="@drawable/beatsclown" />
 
 
     </LinearLayout>

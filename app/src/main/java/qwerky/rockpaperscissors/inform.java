@@ -11,8 +11,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Arrays;
 public class inform extends AppCompatActivity {
-    private MediaPlayer muzak;
     boolean musicWanted=true;
+    private MediaPlayer muzak;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,46 +23,9 @@ public class inform extends AppCompatActivity {
         //Extract the data…
         //Thingy set1 = (Thingy)bundle.getSerializable("Stuff");
         //These are all the diffent rock paper scissors thingies.
-         Thingy red = new Thingy("Red", "Yellow", R.drawable.beatsyellow, R.drawable.beatsyellowthumb, "is more dangerous than");
-         Thingy blue = new Thingy("Blue", "Red", R.drawable.beatsred, R.drawable.beatsredthumb, "depresses");
-         Thingy yellow = new Thingy("Yellow", "Blue", R.drawable.beatsblue, R.drawable.beatsbluethumb, "greens up");
 
-         Thingy rock = new Thingy("Rock", "Scissors", R.drawable.smashesscisors, R.drawable.smashesscisorsthumb, "smashes");
-         Thingy paper = new Thingy("Paper", "Rock",R.drawable.beatsrock,R.drawable.beatsrockthumb, "wraps");
-         Thingy scissors = new Thingy("Scissors", "Paper",  R.drawable.cutspaper, R.drawable.cutspaperthumb, "cut");
 
-         Thingy monkey = new Thingy("Monkey", "Banana", R.drawable.eatsbanana, R.drawable.eatsbananathumb, "eats");
-         Thingy clown = new Thingy("Clown", "Monkey", R.drawable.beatsmonkey,R.drawable.beatsmonkeythumb, "shoots");
-         Thingy banana = new Thingy("Banana", "Clown",R.drawable.slipsclown, R.drawable.slipsclownthumb,"slips up");
-
-         Thingy knife = new Thingy("Knife", "Fork", R.drawable.beatsfork, R.drawable.beatsforkthumb, "stabs");
-         Thingy spoon = new Thingy("Spoon", "Knife",R.drawable.beatsknife,  R.drawable.beatsknifethumb, "reflects and shrinks");
-         Thingy fork = new Thingy("Fork", "Spoon", R.drawable.beatsspoon, R.drawable.beatsspoonthumb,"forks");
-
-         Thingy humanity = new Thingy("Humanity", "DDT",  R.drawable.beatsddt, R.drawable.beatsddtthumb, "outlaws");
-         Thingy mosquito = new Thingy("Mosquito", "Humanity",R.drawable.beatshumanity,R.drawable.beatshumanitythumb, "plagues");
-         Thingy ddt = new Thingy("DDT", "Mosquito", R.drawable.beastmosquito,R.drawable.beastmosquitothumb, "exterminates");
-
-       Thingy fire = new Thingy("Fire", "Air",R.drawable.beatsair, R.drawable.beatsairthumb, "consumes");
-       Thingy water = new Thingy("Water", "Fire", R.drawable.beatsfire2,R.drawable.beatsfire2thumb, "extinguishes");
-         Thingy air = new Thingy("Air", "Water",  R.drawable.beatswater, R.drawable.beatswaterthumb, "evaporates");
-
-         Thingy slug = new Thingy("Slug", "Snake",R.drawable.beatsssnake, R.drawable.beatsssnakethumb, "slimes");
-         Thingy frog = new Thingy("Frog", "Slug",R.drawable.beatslug2,R.drawable.beatslugthumb, "tongue-grabs");
-          Thingy snake = new Thingy("Snake", "Frog",  R.drawable.beatsfrog,R.drawable.beatsfrogthumb, "swallows whole");
-
-        Thingy fox = new Thingy("Fox", "Chief", R.drawable.beatschief, R.drawable.beatschiefthumb, "Outsmarts");
-         Thingy hunter = new Thingy("Hunter", "Fox", R.drawable.beatsfox,R.drawable.beatsfoxthumb, "Guts");
-          Thingy chief = new Thingy("Chief", "Hunter", R.drawable.beatshunter,R.drawable.beatshunterthumb, "Pulls rank on");
-
-         Thingy beer = new Thingy("Beer", "Spirits", R.drawable.beatsclown,R.mipmap.ic_launcher, "lowers");
-         Thingy wines = new Thingy("Wines", "Beer", R.drawable.beatsclown,R.mipmap.ic_launcher, "make you feel queer after");
-         Thingy spirits = new Thingy("Spirits", "Wines", R.drawable.beatsclown, R.mipmap.ic_launcher, "are stronger than");
-
-        Thingy[] set1 = new Thingy[]{rock, paper, scissors, humanity, mosquito, ddt,red,blue,yellow, monkey, clown, banana, knife,
-                spoon, fork, slug, frog, snake, beer, wines, spirits, fire, water, air, fox, hunter, chief};
-
-        final ArrayList<Thingy> set2 = new ArrayList<Thingy>(Arrays.asList(set1));
+        final ArrayList<Thingy> set2 = new ArrayList<Thingy>(Arrays.asList(ThingyArsenal.ALL_THINGS));
 
         // Create an {@link WordAdapter}, whose data source is a list of {@link Word}s. The
         // adapter knows how to create list items for each item in the list.
@@ -79,13 +43,14 @@ public class inform extends AppCompatActivity {
                       @Override
                          public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                           Intent goGallery = new Intent(inform.this, gallery.class);
+                          int theIWeWant = getTheIWeWant(i);
 
 
 //Create the bundle
                           Bundle bundle = new Bundle();
 
 //Add your data to bundle
-                          bundle.putInt("Stuff", set2.get(i).getBeatsPic());
+                          bundle.putInt("Stuff", set2.get(theIWeWant).getBeatsPic());
 
 
 
@@ -130,7 +95,17 @@ public class inform extends AppCompatActivity {
             // is not configured to play an audio file at the moment.
             mp = null;
         }
-    }}
+    }
+
+    private int getTheIWeWant(int i) {
+
+
+        if (i % 3 == 0) return i + 2;
+        if (i % 3 == 1) return i - 1;
+        if (i % 3 == 2) return i - 1;
+        return 0;
+    }
+}
 
 
 

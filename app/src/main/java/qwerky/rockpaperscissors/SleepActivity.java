@@ -20,7 +20,9 @@ public class SleepActivity extends AppCompatActivity {
 
 //Extract the data…
         String stuff = bundle.getString("Stuff");
-        int picky = bundle.getInt("Picky");
+        //int picky = bundle.getInt("Picky");
+        int picky = bundle.getInt("Wicky", 0);
+        boolean bonkers = bundle.getBoolean("bonk");
         mp = MediaPlayer.create(this, R.raw.backmuzik);
         ImageView death = (ImageView) findViewById(R.id.deathScreen);
 

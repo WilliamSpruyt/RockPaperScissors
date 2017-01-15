@@ -4,13 +4,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Rock Paper Scissors"
+        android:icon="@mipmap/monkeyclownbanabaicon"
+        android:label="Monkey Clown Banana"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize">
-
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,11 @@
             android:name=".SleepActivity"
             android:label="Death Screen" />
         <activity android:name=".inform" />
-        <activity android:name=".gallery"></activity>
+        <activity android:name=".gallery" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".BonkersDeathMess"></activity>
     </application>
 
 </manifest>

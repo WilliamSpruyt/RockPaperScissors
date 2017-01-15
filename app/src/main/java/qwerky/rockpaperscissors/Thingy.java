@@ -1,5 +1,8 @@
 package qwerky.rockpaperscissors;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.io.Serializable;
 
 /**
@@ -23,7 +26,7 @@ public class Thingy implements Serializable {
 
         if(enemy.equals(beats)){result="win";}
         if(enemy.equals(name)){result="draw";}
-
+        //toaster("ene "+enemy + " " + beats + "you " + name + " "+ result,context);
         return result;}
 
     public String getName()
@@ -40,6 +43,14 @@ public class Thingy implements Serializable {
 
     public String toString()
     {return name+" "+verb+" "+beats+"!";}
+
+    public void toaster(String message, Context context) {
+        CharSequence text = "Hello toast!";
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
 
 }
 

@@ -30,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity {
     // counter for objects in array ThingyArsenal.ALL_THINGS
     int thingCount = 0;
-    Random choose=new Random();
+    Random choose = new Random();
 
     Boolean musicWanted = true;
     int level = 0;
@@ -42,22 +42,28 @@ public class MainActivity extends AppCompatActivity {
     String sender = "";
     //Will send the res id to SleepActivity
     int outcomePic;
+    int outcomePicB;
+
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
 
     private GoogleApiClient client;
-     
+
     private MediaPlayer muzak;
 
     private Cpu computer = new Cpu();
     //records player choice;
     private int playerChoice = 7;
     private boolean yourTurn = true;
-    private boolean bonkers=false;
-    private String result = "draw";
-    private int numberOfThings=(ThingyArsenal.ALL_THINGS.length);
+    private boolean bonkers = false;
+    private String result = null;
+    private int numberOfThings = (ThingyArsenal.ALL_THINGS.length);
+    private Thingy thisRock = ThingyArsenal.ALL_THINGS[0];
+    private Thingy thisPaper = ThingyArsenal.ALL_THINGS[1];
+    private Thingy thisScissors = ThingyArsenal.ALL_THINGS[2];
 
     public String getSender() {
         return sender;
@@ -76,47 +82,52 @@ public class MainActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        bonkers=sp.getBoolean("Warped",false);
-        musicWanted=sp.getBoolean("Music",true);
+        bonkers = sp.getBoolean("Warped", false);
+        musicWanted = sp.getBoolean("Music", true);
+
         // Restore preferences
         SharedPreferences scores = getSharedPreferences("scores", MODE_PRIVATE);
         hiLevel = scores.getInt("toplevel", 0);
         hiStreak = scores.getInt("histreak", 0);
 
-        final CircleImageView rockpic=(CircleImageView) findViewById(R.id.rock_image);
-        final CircleImageView paperpic=(CircleImageView) findViewById(R.id.paper_image);
-        final CircleImageView scissorspic=(CircleImageView) findViewById(R.id.scissors_image);
+        final CircleImageView rockpic = (CircleImageView) findViewById(R.id.rock_image);
+        final CircleImageView paperpic = (CircleImageView) findViewById(R.id.paper_image);
+        final CircleImageView scissorspic = (CircleImageView) findViewById(R.id.scissors_image);
 
 
         final TextView rockView = (TextView) findViewById(R.id.rock_button);
         final TextView paperView = (TextView) findViewById(R.id.paper_button);
         final TextView scissorsView = (TextView) findViewById(R.id.scissors_button);
-        final TextView theI = (TextView) findViewById(R.id.infomazione);
-        doStarting();
+
+        doStarting(result);
 
         if (rockView != null) {
             rockView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                     rockpic.setBorderWidth(10);rockMme(v,1);
+                    rockpic.setBorderWidth(10);
+                    rockMme(v, 1);
                 }
             });
         }
         if (paperView != null) {
             paperView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {paperpic.setBorderWidth(10);
-                    rockMme(v,2);;
+                public void onClick(View v) {
+                    paperpic.setBorderWidth(10);
+                    rockMme(v, 2);
                 }
             });
         }
         if (scissorsView != null) {
             scissorsView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {scissorspic.setBorderWidth(10);
-                    rockMme(v,3);
+                public void onClick(View v) {
+                    scissorspic.setBorderWidth(10);
+                    rockMme(v, 3);
                 }
             });
         }
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -125,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -135,26 +147,51 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-            return true;}
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
 
-    public void rockMme(View view,int playerChoice) {
+    public void rockMme(View view, int playerClick) {
         if (yourTurn) {
+
             TextView pressedView = (TextView) findViewById(R.id.rock_button);
+            if (playerClick == 2) {
+                pressedView = (TextView) findViewById(R.id.paper_button);
+            }
+            if (playerClick == 3) {
+                pressedView = (TextView) findViewById(R.id.scissors_button);
+            }
 
 
-
-
-            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
+            playerChoice = playerClick;
+            result = inPlay(thisRock, thisPaper, thisScissors, computer);
             if (result.equals("win")) {
                 final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
                 ding.start();
-                outcomePic = ThingyArsenal.ALL_THINGS[thingCount].beatsPic;
+
+
                 thingCount += 3;
-                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
+                if (thingCount > numberOfThings - 1 && bonkers != true) {
+                    bonkers = true;
+                    toaster("Things are about to get SURREALER");
+                }
+                int rockInt = 0;
+                int paperInt = 1;
+                int scissorsInt = 2;
+                if (bonkers) {
+                    thingCount = (choose.nextInt(numberOfThings / 3)) * 3;
+                    thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+                    thisPaper = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + paperInt];
+                    thisScissors = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + scissorsInt];
+                }
+                if (!bonkers) {
+                    thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+                    thisPaper = ThingyArsenal.ALL_THINGS[thingCount + paperInt];
+                    thisScissors = ThingyArsenal.ALL_THINGS[thingCount + scissorsInt];
+                }
 
             } else if (result.equals("lose")) {
                 Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
@@ -170,21 +207,60 @@ public class MainActivity extends AppCompatActivity {
                 chances = Math.max(0, chances - 1);
                 level = 1;
 
+                Thingy winningThingy = null;
+                Thingy losingThingy = null;
+                switch (playerChoice) {
+                    case 1:
+                        winningThingy = thisPaper;
+                        losingThingy = thisRock;
+                        break;
+                    case 2:
+                        winningThingy = thisScissors;
+                        losingThingy = thisPaper;
+                        break;
+                    case 3:
+                        winningThingy = thisRock;
+                        losingThingy = thisScissors;
+                        break;
+                }
 
-                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".\nYou lose.\n"
-                        + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount + 1].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".");
 
+                setSender("You chose " + losingThingy.getName() + ".\nWe chose "
+                        + winningThingy.getName() + ".\nYou lose.\n"
+                        + winningThingy.getName() + " " +
+                        winningThingy.getVerb() + " " + losingThingy.getName() + ".");
+
+                outcomePicB = losingThingy.getBeatsPic();
+                outcomePic = winningThingy.getThumb();
                 thingCount = 0;
+                int rockInt = 0;
+                int paperInt = 1;
+                int scissorsInt = 2;
+                if (bonkers) {
+                    thingCount = (choose.nextInt(numberOfThings / 3)) * 3;
+                    thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+                    thisPaper = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + paperInt];
+                    thisScissors = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + scissorsInt];
+                }
+                if (!bonkers) {
+                    thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+                    thisPaper = ThingyArsenal.ALL_THINGS[thingCount + paperInt];
+                    thisScissors = ThingyArsenal.ALL_THINGS[thingCount + scissorsInt];
+                }
                 Intent i = new Intent(this, SleepActivity.class);
+                if (bonkers) i = new Intent(this, BonkersDeathMess.class);
 
 
 //Create the bundle
                 Bundle bundle = new Bundle();
 
 //Add your data to bundle
+
                 bundle.putString("Stuff", getSender());
                 Log.i("getBeatsrbun ", "" + outcomePic);
                 bundle.putInt("Picky", outcomePic);
+                bundle.putInt("Wicky", outcomePicB);
+                bundle.putBoolean("bonk", bonkers);
 
 
 //Add the bundle to the intent
@@ -196,133 +272,43 @@ public class MainActivity extends AppCompatActivity {
 
 
         } else {
-            doStarting();
-        }
-    }
-
-    public void papMme(View view) {
-
-        if (yourTurn) {
-            TextView pressedView = (TextView) findViewById(R.id.paper_button);
-
-            playerChoice = 2;
-            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
-            if (result.equals("win")) {
-                final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
-                ding.start();
-                outcomePic = ThingyArsenal.ALL_THINGS[thingCount + 1].beatsPic;
-                thingCount += 3;
-                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
-
-            } else if (result.equals("lose")) {
-                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
-                pressedView.startAnimation(hyperspaceJumpAnimation);
-                if (hiStreak < streak) {
-                    hiStreak = streak;
-                }
-                if (hiLevel < level) {
-                    hiLevel = level;
-                }
-                releaseMediaPlayer(muzak);
-                chances = Math.max(0, chances - 1);
-                level = 1;
-
-
-                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".\nYou lose.\n"
-                        + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount + 2].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount + 1].getName() + ".");
-
-                thingCount = 0;
-
-                Intent i = new Intent(this, SleepActivity.class);
-
-
-//Create the bundle
-                Bundle bundle = new Bundle();
-
-//Add your data to bundle
-                bundle.putString("Stuff", getSender());
-                Log.i("getBeatsrbun ", "" + outcomePic);
-                bundle.putInt("Picky", outcomePic);
-//Add the bundle to the intent
-                i.putExtras(bundle);
-
-//Fire that second activity
-                startActivity(i);
-            }
-        } else {
-            doStarting();
-        }
-    }
-
-    public void sciMme(View view) {
-
-        if (yourTurn) {
-            TextView pressedView = (TextView) findViewById(R.id.scissors_button);
-
-            playerChoice = 3;
-            result = inPlay(ThingyArsenal.ALL_THINGS[thingCount], ThingyArsenal.ALL_THINGS[thingCount + 1], ThingyArsenal.ALL_THINGS[thingCount + 2], computer);
-            if (result.equals("win")) {
-                final MediaPlayer ding = MediaPlayer.create(this, R.raw.ding);
-                ding.start();
-                outcomePic = ThingyArsenal.ALL_THINGS[thingCount + 2].beatsPic;
-                thingCount += 3;
-                if(bonkers){thingCount=(choose.nextInt(numberOfThings/3))*3;}
-
-            } else if (result.equals("lose")) {
-                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.plummet);
-                pressedView.startAnimation(hyperspaceJumpAnimation);
-                if (hiStreak < streak) {
-                    hiStreak = streak;
-                }
-                if (hiLevel < level) {
-                    hiLevel = level;
-                }
-                releaseMediaPlayer(muzak);
-                chances = Math.max(0, chances - 1);
-                level = 1;
-
-
-                setSender("You chose " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".\nThe computer chose " + ThingyArsenal.ALL_THINGS[thingCount].getName() + ".\nYou lose.\n"
-                        + ThingyArsenal.ALL_THINGS[thingCount].getName() + " " + ThingyArsenal.ALL_THINGS[thingCount].getVerb() + " " + ThingyArsenal.ALL_THINGS[thingCount + 2].getName() + ".");
-
-                thingCount = 0;
-
-                Intent i = new Intent(this, SleepActivity.class);
-
-
-//Create the bundle
-                Bundle bundle = new Bundle();
-
-//Add your data to bundle
-                bundle.putString("Stuff", getSender());
-                Log.i("getBeatsrbun ", "" + outcomePic);
-                bundle.putInt("Picky", outcomePic);
-//Add the bundle to the intent
-                i.putExtras(bundle);
-
-//Fire that second activity
-                startActivity(i);
-            }
-        } else {
-            doStarting();
+            doStarting(result);
         }
     }
 
 
-    public void doStarting() {
+    public void doStarting(String result) {
         if (thingCount > ThingyArsenal.ALL_THINGS.length - 1) {
             thingCount = 0;
         }
-        final CircleImageView rockpic=(CircleImageView) findViewById(R.id.rock_image);
-        final CircleImageView paperpic=(CircleImageView) findViewById(R.id.paper_image);
-        final CircleImageView scissorspic=(CircleImageView) findViewById(R.id.scissors_image);
+        int rockInt = 0;
+        int paperInt = 1;
+        int scissorsInt = 2;
+
+        if (!bonkers) {
+            thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+            thisPaper = ThingyArsenal.ALL_THINGS[thingCount + paperInt];
+            thisScissors = ThingyArsenal.ALL_THINGS[thingCount + scissorsInt];
+        }
+
+        if (bonkers && result != "draw") {
+            thingCount = (choose.nextInt(numberOfThings / 3)) * 3;
+            thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+            thisPaper = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + paperInt];
+            thisScissors = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + scissorsInt];
+        }
+
+        final CircleImageView rockpic = (CircleImageView) findViewById(R.id.rock_image);
+        final CircleImageView paperpic = (CircleImageView) findViewById(R.id.paper_image);
+        final CircleImageView scissorspic = (CircleImageView) findViewById(R.id.scissors_image);
         scissorspic.setBorderWidth(0);
         rockpic.setBorderWidth(0);
         paperpic.setBorderWidth(0);
         TextView sciView = (TextView) findViewById(R.id.scissors_button);
 
-        if (sciView == null) throw new AssertionError();
-        sciView.setBackgroundColor(Color.rgb(255, 235, 59));
+        if (sciView != null) {
+            sciView.setBackgroundColor(Color.rgb(255, 235, 59));
+        }
 
         TextView rocView = (TextView) findViewById(R.id.rock_button);
         if (rocView != null) {
@@ -334,13 +320,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        display(ThingyArsenal.ALL_THINGS[thingCount].getName(), R.id.rock_button, R.id.rock_image, ThingyArsenal.ALL_THINGS[thingCount].getThumb());
-        int p=1;
-        int s=2;
-        if(bonkers){p=(choose.nextInt(numberOfThings/3)*3)+1-thingCount;
-                    s=(choose.nextInt(numberOfThings/3)*3)+2-thingCount;}
-        display(ThingyArsenal.ALL_THINGS[thingCount + p].getName(), R.id.paper_button, R.id.paper_image, ThingyArsenal.ALL_THINGS[thingCount + p].getThumb());
-        display(ThingyArsenal.ALL_THINGS[thingCount + s].getName(), R.id.scissors_button, R.id.scissors_image, ThingyArsenal.ALL_THINGS[thingCount + s].getThumb());
+        display(thisRock.getName(), R.id.rock_button, R.id.rock_image, thisRock.getThumb());
+
+        display(thisPaper.getName(), R.id.paper_button, R.id.paper_image, thisPaper.getThumb());
+        display(thisScissors.getName(), R.id.scissors_button, R.id.scissors_image, thisScissors.getThumb());
         yourTurn = true;
 
 
@@ -377,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         }
         ImageView thumbShow = (ImageView) findViewById(R.id.challenge);
         if (thumbShow != null) {
-            thumbShow.setImageResource(R.drawable.beatsclown);
+            thumbShow.setImageResource(R.mipmap.ic_launcher);
         }
 
 
@@ -422,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
         Button sciBut = (Button) findViewById(
                 R.id.scissors_button);*/
 
-        if (rockBut != null)  {
+        if (rockBut != null) {
 
             Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.tweener);
             rockBut.startAnimation(hyperspaceJumpAnimation);
@@ -442,17 +425,24 @@ public class MainActivity extends AppCompatActivity {
         sciBut.setText(scissorsy);*/
     }
 
+
     @Override
     public void onStart() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        boolean checkMusicWanted = sp.getBoolean("Music", true);
+
         super.onStart();
-        if (musicWanted = true) {
-            muzak = MediaPlayer.create(this, R.raw.wavmuzakshort);
+
+        muzak = MediaPlayer.create(this, R.raw.wavmuzakshort);
 
 
-        }
-
-        if (muzak != null||musicWanted) {
+        if (muzak != null && checkMusicWanted) {
             muzak.start();
+        }
+        if (muzak != null && !checkMusicWanted) {
+            muzak.stop();
+            releaseMediaPlayer(muzak);
         }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -469,6 +459,24 @@ public class MainActivity extends AppCompatActivity {
                 Uri.parse("android-app://qwerky.rockpaperscissors/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    protected void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean checkBonkersChanged = sp.getBoolean("Warped", false);
+        boolean checkMusicWanted = sp.getBoolean("Music", true);
+
+        if (muzak != null && !checkMusicWanted) {
+
+            releaseMediaPlayer(muzak);
+        }
+        if (checkBonkersChanged != bonkers) {
+            bonkers = checkBonkersChanged;
+            reset();
+            doStarting("lose");
+        }
+        super.onResume();
     }
 
     @Override
@@ -509,14 +517,20 @@ public class MainActivity extends AppCompatActivity {
         String result = "dna";
         String verb = "likes";
         int thumb = R.mipmap.ic_launcher;
-        int computerInt=0;
+        int computerInt = 0;
 
 
         cpu = computer.cpuChoice(rock, paper, scissors);
-        if(bonkers){
-        if (cpu.equals(rock.getName())){computerInt=1;}
-        if (cpu.equals(paper.getName())){computerInt=2;}
-        if (cpu.equals(scissors.getName())){computerInt=3;}
+        if (bonkers) {
+            if (cpu.equals(rock.getName())) {
+                computerInt = 1;
+            }
+            if (cpu.equals(paper.getName())) {
+                computerInt = 2;
+            }
+            if (cpu.equals(scissors.getName())) {
+                computerInt = 3;
+            }
         }
 
         ImageView thumbShow = (ImageView) findViewById(
@@ -532,7 +546,10 @@ public class MainActivity extends AppCompatActivity {
             mess = (TextView) findViewById(
                     R.id.rock_button);
             outcomePic = rock.getBeatsPic();
-            result = rock.compete(cpu);
+            if (!bonkers) {
+                result = rock.compete(cpu);
+            }
+
         }
         if (playerChoice == 2) {
             name = paper.getName();
@@ -541,7 +558,9 @@ public class MainActivity extends AppCompatActivity {
             mess = (TextView) findViewById(
                     R.id.paper_button);
             outcomePic = paper.getBeatsPic();
-            result = paper.compete(cpu);
+            if (!bonkers) {
+                result = paper.compete(cpu);
+            }
         }
         if (playerChoice == 3) {
             name = scissors.getName();
@@ -551,18 +570,22 @@ public class MainActivity extends AppCompatActivity {
             mess = (TextView) findViewById(
                     R.id.scissors_button);
 
-            result = scissors.compete(cpu);
+            if (!bonkers) {
+                result = scissors.compete(cpu);
+            }
 
         }
-        if(bonkers)result=crazyPlay(playerChoice,computerInt);
 
+        if (bonkers) {
+            result = crazyPlay(playerChoice, computerInt);
+        }
 
         if (result.equals("lose")) {
             streak = 0;
 
             if (chances > 0) {
                 result = "draw";
-                Toast toast = Toast.makeText(this, "You used your like", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(this, "You used a like", Toast.LENGTH_SHORT);
                 toast.show();
                 chances = Math.max(0, chances - 1);
                 TextView cha = (TextView) findViewById(
@@ -582,9 +605,11 @@ public class MainActivity extends AppCompatActivity {
             if (mess != null) {
                 mess.setBackgroundColor(Color.rgb(0, 255, 0));
                 mess.setTextSize(30);
-                String messText="You chose " + name + ".\nThe computer chose " + cpu + ". You win!\n"
+                String messText = "You chose " + name + ".\nWe chose " + cpu + ".\nYou win!\n"
                         + name + " " + verb + " " + cpu + ".";
-                if(messText.length()>80){mess.setTextSize(25);}
+                if (messText.length() > 80) {
+                    mess.setTextSize(25);
+                }
                 mess.setText(messText);
                 if (thumbShow != null) {
                     thumbShow.setImageResource(thumb);
@@ -612,25 +637,30 @@ public class MainActivity extends AppCompatActivity {
 
                 mess.setBackgroundColor(Color.rgb(218, 112, 214));
             }
-
-            mess.setTextSize(30);
-
-            mess.setText("You chose " + name + ".\nThe computer chose " + cpu + ".\nA draw.\n" +
+            String messText = ("You chose " + name + ".\nWe chose " + cpu + ".\nA draw.\n" +
                     name + " likes " + cpu + ".");
+            mess.setTextSize(30);
+            if (messText.length() > 80) {
+                mess.setTextSize(25);
+            }
+            mess.setText(messText);
+
         }
         yourTurn = false;
         return result;
 
     }
-    private String crazyPlay(int playerChoice,int cpuChoice)
-    {   toaster("p "+playerChoice+"c "+cpuChoice);
 
-        if (playerChoice==cpuChoice)return"draw";
-        if (playerChoice==0&&cpuChoice==2||playerChoice==1&&cpuChoice==0||playerChoice==2&&cpuChoice==1)return"win";
+    private String crazyPlay(int playerChoice, int cpuChoice) {
 
-        return"lose";
+        if (playerChoice == cpuChoice) return "draw";
+        if (playerChoice == 1 && cpuChoice == 3 || playerChoice == 2 && cpuChoice == 1 || playerChoice == 3 && cpuChoice == 2)
+            return "win";
+
+        return "lose";
 
     }
+
     public void toaster(String message) {
         Context context = getApplicationContext();
         CharSequence text = "Hello toast!";
@@ -651,6 +681,24 @@ public class MainActivity extends AppCompatActivity {
             // Set the media player back to null. For our code, we've decided that
             // setting the media player to null is an easy way to tell that the media player
             // is not configured to play an audio file at the moment.
+        }
+    }
+
+    private void reset() {
+        thingCount = 0;
+        int rockInt = 0;
+        int paperInt = 1;
+        int scissorsInt = 2;
+        if (bonkers) {
+            thingCount = (choose.nextInt(numberOfThings / 3)) * 3;
+            thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+            thisPaper = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + paperInt];
+            thisScissors = ThingyArsenal.ALL_THINGS[((choose.nextInt(numberOfThings / 3)) * 3) + scissorsInt];
+        }
+        if (!bonkers) {
+            thisRock = ThingyArsenal.ALL_THINGS[thingCount + rockInt];
+            thisPaper = ThingyArsenal.ALL_THINGS[thingCount + paperInt];
+            thisScissors = ThingyArsenal.ALL_THINGS[thingCount + scissorsInt];
         }
     }
 }
